@@ -1,0 +1,5 @@
+Prediction written BEFORE compiling/running predict.cpp:
+3.5 4 3.5
+- p->rate(): rate() is NOT virtual, so the call is bound at COMPILE time from the static type Account* -> Account::rate() = 3.5
+- p->vrate(): virtual, bound at RUN time from the dynamic type (SeniorAccount) -> 4 (double 4.0 prints as "4")
+- copy.vrate(): copy is a plain Account (object slicing copied only the Account part); its dynamic type is Account -> 3.5

@@ -1,0 +1,4 @@
+Prediction written BEFORE compiling/running engine.cpp:
+Vehicle Engine Car | ~Car ~Engine ~Vehicle 
+Rule: base classes first, then member objects (declaration order), then the derived constructor body.
+Destruction is the exact reverse: derived body, member objects (reverse), base classes (reverse).

@@ -1,0 +1,10 @@
+Predictions written BEFORE compiling/running.
+
+(1) Original program (virtual Person):
+Person Student Staff TA 
+Reason: with virtual inheritance the most-derived class (TeachingAssistant) constructs the single shared Person first, then bases in declaration order (Student, Staff), then itself.
+
+(2) After removing 'virtual' from both bases:
+Person Student Person Staff TA 
+Two Person sub-objects, one inside each of Student and Staff. The program still compiles (no member of Person is named in main), so no compiler message is expected. Any access to a Person member via a TeachingAssistant would be ambiguous.
+sizeof(TeachingAssistant) expected to be larger/different without virtual (vptr/vbptr overhead disappears but Person is duplicated).

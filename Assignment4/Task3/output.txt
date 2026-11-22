@@ -1,0 +1,79 @@
+== engine.cpp ==
+Vehicle Engine Car | ~Car ~Engine ~Vehicle 
+
+== people.cpp (virtual) ==
+---- Student ----
+  Address(Salem) Person(Kavya)
+  Course(OOP) Student
+~Student
+  ~Course ~Person
+  ~Address ---- Staff ----
+  Address(Chennai) Person(Ravi)
+Staff
+~Staff
+~Person
+  ~Address ---- TeachingAssistant ----
+  Address(Erode) Person(Meena)
+  Course(DSA) Student
+Staff
+TeachingAssistant
+~TeachingAssistant
+~Staff
+~Student
+  ~Course ~Person
+  ~Address sizeof(TeachingAssistant) = 152  sizeof(Student) = 136
+
+== people.cpp -DNOVIRTUAL ==
+---- Student ----
+  Address(Salem) Person(Kavya)
+  Course(OOP) Student
+~Student
+  ~Course ~Person
+  ~Address ---- Staff ----
+  Address(Chennai) Person(Ravi)
+Staff
+~Staff
+~Person
+  ~Address ---- TeachingAssistant ----
+  Address(Erode) Person(Meena)
+  Course(DSA) Student
+  Address(Erode) Person(Meena)
+Staff
+TeachingAssistant
+~TeachingAssistant
+~Staff
+~Person
+  ~Address ~Student
+  ~Course ~Person
+  ~Address sizeof(TeachingAssistant) = 224  sizeof(Student) = 128
+
+== student_todo.cpp (expected: 192311001 Kavya (19) Salem-636001) ==
+192311001 Kavya (19) Salem-636001
+
+== student_swapped.cpp (-Wall warning) ==
+student_swapped.cpp: In constructor 'Student::Student(const std::string&, int, long long int, const std::string&, int)':
+student_swapped.cpp:24:13: warning: 'Student::home' will be initialized after [-Wreorder]
+   24 |     Address home;
+      |             ^~~~
+student_swapped.cpp:23:15: warning:   'long long int Student::regNo' [-Wreorder]
+   23 |     long long regNo;
+      |               ^~~~~
+student_swapped.cpp:28:5: warning:   when initialized here [-Wreorder]
+   28 |     Student(const std::string& n, int a, long long r, const std::string& c, int p)
+      |     ^~~~~~~
+student_swapped.cpp:23:15: warning: 'Student::regNo' will be initialized after [-Wreorder]
+   23 |     long long regNo;
+      |               ^~~~~
+student_swapped.cpp:29:44: warning:   base 'Person' [-Wreorder]
+   29 |         : home(c, p), regNo(r), Person(n, a) {}
+      |                                            ^
+student_swapped.cpp:28:5: warning:   when initialized here [-Wreorder]
+   28 |     Student(const std::string& n, int a, long long r, const std::string& c, int p)
+      |     ^~~~~~~
+192311001 Kavya (19) Salem-636001
+
+== student_ptr.cpp (ASan, then -O2 timing) ==
+192311001 Salem-636001 | 192311001 Salem-636001 | 192311001 Salem-636001
+192311001 Salem-636001 | 192311001 Salem-636001 | 192311001 Salem-636001
+sizeof(Student with Address member) = 48, sizeof(Student with Address*) = 16 (+ separate heap block of at least 40 bytes)
+2000000 create+destroy: member 30.8098 ms, pointer (new/delete) 61.9581 ms

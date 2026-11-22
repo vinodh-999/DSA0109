@@ -1,0 +1,24 @@
+== cart_todo.cpp (expected 324.00) ==
+324.00
+
+== four_ways.cpp (ASan) ==
+a=162.00 b=171.00 c=50.00 d=200.00
+this == &a ? true
+highest total: cart D = 200.00  (indexing)
+highest total: cart D = 200.00  (pointer arithmetic)
+
+== byvalue.cpp ==
+returning Cart  : original cart total = 60 (only the first add reached it; others changed temporary copies)
+returning Cart& : original cart total = 360
+
+== vector_carts.cpp (-O2) ==
+vector data pointer changed after growth: true; old pointer p no longer points at element 0 (dangling)
+sizeof(Cart)=96 bytes copied per element on growth; pointer array stores 8 bytes per cart (+ the Cart on the heap)
+1000000 carts, find max: vector<Cart> 9.16828 ms, array of pointers 9.96716 ms (best 999)
+
+== dangling.cpp under ASan ==
+==468==ERROR: AddressSanitizer: heap-use-after-free on address 0x502000000010 at pc 0x558f34a4c5bf bp 0x7ffe5d2594d0 sp 0x7ffe5d2594c0
+    #1 0x7f736a42a1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+freed by thread T0 here:
+    #1 0x558f34a4db4a in std::__new_allocator<int>::deallocate(int*, unsigned long) /usr/include/c++/13/bits/new_allocator.h:172
+    #1 0x558f34a4dc51 in std::__new_allocator<int>::allocate(unsigned long, void const*) /usr/include/c++/13/bits/new_allocator.h:151

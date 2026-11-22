@@ -1,0 +1,46 @@
+== predict.cpp ==
+3.5 4 3.5
+
+== defects.cpp, normal build: destructor output is the evidence ==
+rates:
+3.5
+3.5
+deleting through Account*:
+  ~Account
+  ~Account
+slicing:
+  ~SeniorAccount (releases history)
+  ~Account
+copy.rate() = 3.5  sizeof(Account)=1 sizeof(SeniorAccount)=8
+end of main
+  ~Account
+
+== defects.cpp under -fsanitize=address: finding 1 (aborts at first error) ==
+==419==ERROR: AddressSanitizer: new-delete-type-mismatch on 0x502000000030 in thread T0:
+  size of the allocated type:   8 bytes;
+  size of the deallocated type: 1 bytes.
+SUMMARY: AddressSanitizer: new-delete-type-mismatch ../../../../src/libsanitizer/asan/asan_new_delete.cpp:164 in operator delete(void*, unsigned long)
+
+== same binary, new-delete-type-mismatch check disabled so the program finishes: finding 2 (leak) ==
+==421==ERROR: LeakSanitizer: detected memory leaks
+Direct leak of 800 byte(s) in 1 object(s) allocated from:
+SUMMARY: AddressSanitizer: 800 byte(s) leaked in 1 allocation(s).
+
+== repaired.cpp (ASan, leaks on) ==
+3.5
+4
+deleting through Account*:
+  ~Account
+  ~SeniorAccount (releases history)
+  ~Account
+via reference: 4
+  ~SeniorAccount (releases history)
+  ~Account
+(ASan: no errors, no leaks)
+
+== smart.cpp (-O2) ==
+3.5
+4
+n=1000: raw ptr loop 0.004181 ms, unique_ptr loop 0.004544 ms (sums 4000, 4000)
+n=100000: raw ptr loop 1.0746 ms, unique_ptr loop 1.10777 ms (sums 400000, 400000)
+n=1000000: raw ptr loop 11.0502 ms, unique_ptr loop 11.2484 ms (sums 4e+06, 4e+06)

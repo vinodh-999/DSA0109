@@ -1,0 +1,19 @@
+== bad_original.cpp ==
+79000 18000
+sizeof Professor=64 LabAssistant=56 GuestFaculty=56
+pay with invalid basic: 7992.9 (no protection)
+
+== staff.cpp ==
+Professor Dr. Rao (101): 79000
+LabAssistant Meena (102): 28400
+GuestFaculty Mr. Das (201): 18000
+Technician Ravi (301): 38500
+Total payroll: 163900
+
+== switch_staff.cpp ==
+sizeof(single Staff, every object)   = 80
+sizeof(Professor-like derived)       = 64
+sizeof(GuestFaculty-like derived)    = 72
+20000000 pay() calls: switch 62.4874 ms, virtual 56.9375 ms (2.84715e+10 1.90495e+10)
+Places to change for a new type: switch version = enum + pay() switch + every other switch/printing code + fields in the one class; hierarchy version = one new class.
+

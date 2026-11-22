@@ -1,0 +1,31 @@
+== rental.cpp (ASan+UBSan) ==
+--- fleet ---
+Bicycle BI-01 Rs100.00/day [available]
+TwoWheeler TW-01 Rs300.00/day [available] level=8.00 service due 15/1/2027
+Car CA-01 Rs1500.00/day [available] level=30.00 service due 1/3/2027 seats=5
+ElectricCar EV-01 Rs2000.00/day [available] level=80.00 service due 30/6/2027 seats=5 battery=40.00kWh
+--- rent each type and return on time ---
+PASS Bicycle 3 days: got 300.00, expected 300.00
+PASS TwoWheeler 2 days 4 L: got 1000.00, expected 1000.00
+PASS Car 2 days 10 L: got 4000.00, expected 4000.00
+PASS ElectricCar 2 days 25 kWh: got 4300.00, expected 4300.00
+--- late return (2 days late, rate*1.5 per late day) ---
+PASS Car 2 days 10 L + 2 late: got 8500.00, expected 8500.00
+PASS Bicycle 1 day + 1 late: got 250.00, expected 250.00
+--- error cases ---
+rent unknown: false, return not-rented: -1.00
+rent twice: false
+--- NEW TYPE added without changing existing classes ---
+PASS ElectricBus 1 day 50 kWh: got 6475.00, expected 6475.00
+Bicycle BI-01 Rs100.00/day [available]
+TwoWheeler TW-01 Rs300.00/day [RENTED] level=8.00 service due 15/1/2027
+Car CA-01 Rs1500.00/day [available] level=30.00 service due 1/3/2027 seats=5
+ElectricCar EV-01 Rs2000.00/day [available] level=80.00 service due 30/6/2027 seats=5 battery=40.00kWh
+ElectricBus EB-01 Rs6000.00/day [available] level=100.00 service due 9/9/2027 seats=40
+ALL TESTS PASSED
+
+== switch_vehicle.cpp (-O2) ==
+sizeof(VehicleS, every object) = 88
+sizeof(Bicycle) = 56, TwoWheeler = 80, Car = 80, ElectricCar = 88
+40000000 charge() calls: switch 115.733 ms, virtual 107.339 ms, results equal: 1
+New vehicle type: switch version edits enum + charge() switch + describe/list code + adds unused fields to the single class (>= 3 edits in existing code); hierarchy version adds one new class (bus.h) and edits 0 existing classes.
